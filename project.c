@@ -69,10 +69,11 @@ void deleteUserAccount();
 
 // Part of Abu Zafor
 
-void initializeBuses();
+
 void displayRoutes();
 void displaySeats(Bus *selectedBus, int route_id);
 void selectBusAndSeat();
+void initializeBuses();
 void selectSeat(Bus *selectedBus, int route_id, const char *date);
 void cancelReservation();
 void adminCancelReservation();
@@ -174,7 +175,7 @@ void adminMenu()
         printf("1. View Registered Users\n");
         printf("2. Delete User Account\n");
         printf("3. Add New Bus\n");
-        printf("4. Remove Bus\n"); // New option added
+        printf("4. Remove Bus\n"); 
         printf("5. Add New Route\n");
         printf("6. Remove Route\n");
         printf("7. Cancel User Ticket\n");
@@ -198,12 +199,12 @@ void adminMenu()
             break;
         case 4:
             system("cls");
-            removeBus(); // Call to the new function
+            removeBus(); 
             break;
 
         case 5:
             system("cls");
-            addRoute(); // Call to the new function
+            addRoute(); 
             break;
 
         case 6:
@@ -270,19 +271,19 @@ void userMenu()
     } while (choice != 3);
 }
 
-// Register User
+
 // Register User
 void registerUser()
 {
     char username[MAX_USERNAME], password[MAX_PASSWORD], email[100];
-    FILE *file = fopen(USER_FILE, "a+"); // Open in append mode and read mode
+    FILE *file = fopen(USER_FILE, "a+"); 
     if (!file)
     {
         printf("Error opening user file.\n");
         return;
     }
 
-    // Check for existing username or email
+    
     char file_username[MAX_USERNAME], file_password[MAX_PASSWORD], file_email[100];
 
     // Input new user details
@@ -330,13 +331,13 @@ int loginUser()
     }
 
     printf("Enter username or email: ");
-    scanf("%s", input); // Read either username or email
+    scanf("%s", input); 
     printf("Enter password: ");
     scanf("%s", password);
 
     while (fscanf(file, "%s %s %s", file_username, file_password, file_email) != EOF)
     {
-        // Check if the input matches either the username or email and the password
+        
         if ((strcmp(input, file_username) == 0 || strcmp(input, file_email) == 0) && strcmp(password, file_password) == 0)
         {
             fclose(file);
@@ -472,23 +473,7 @@ void deleteUserAccount()
 
 
 
-// Initialize Buses
-void initializeBuses()
-{
-    // Predefined buses
-    strcpy(buses[0].name, "Hanif Enterprise");
-    strcpy(buses[1].name, "National Travels");
-    strcpy(buses[2].name, "Desh Travels");
-    strcpy(buses[3].name, "Grameen Travels");
-    total_buses = 4;
 
-    // Initialize seat availability
-    for (int i = 0; i < total_buses; i++)
-    {
-        buses[i].bus_id = i + 1;
-        memset(buses[i].seats, 0, sizeof(buses[i].seats));
-    }
-}
 
 // Function to display routes with an improved interface
 void displayRoutes()
@@ -607,7 +592,23 @@ void displaySeats(Bus *selectedBus, int route_id)
     printf("=====================================================\n\n");
 }
 
-// Seat Reservation
+// Initialize Buses
+void initializeBuses()
+{
+    // Predefined buses
+    strcpy(buses[0].name, "Hanif Enterprise");
+    strcpy(buses[1].name, "National Travels");
+    strcpy(buses[2].name, "Desh Travels");
+    strcpy(buses[3].name, "Grameen Travels");
+    total_buses = 4;
+
+    // Initialize seat availability
+    for (int i = 0; i < total_buses; i++)
+    {
+        buses[i].bus_id = i + 1;
+        memset(buses[i].seats, 0, sizeof(buses[i].seats));
+    }
+}
 // Seat Reservation
 void selectSeat(Bus *selectedBus, int route_id, const char *date)
 {
