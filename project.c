@@ -381,7 +381,7 @@ int loginAdmin()
 // View Registered Users
 void viewRegisteredUsers()
 {
-    char username[MAX_USERNAME], password[MAX_PASSWORD];
+    char username[MAX_USERNAME], password[MAX_PASSWORD], email[100];
     FILE *file = fopen(USER_FILE, "r");
     if (!file)
     {
@@ -390,14 +390,17 @@ void viewRegisteredUsers()
     }
 
     printf("\n=== Registered Users ===\n");
-    while (fscanf(file, "%s %s", username, password) != EOF)
+    printf("%-20s %-20s %-30s\n", "Username", "Password", "Email");
+    printf("-------------------------------------------------------------\n");
+    
+    while (fscanf(file, "%s %s %s", username, password, email) != EOF)
     {
-        printf("Username: %s\n", username);
+        printf("%-20s %-20s %-30s\n", username, password, email);
     }
     fclose(file);
 
     getchar();
-    printf("Please enter to continue.");
+    printf("Press enter to continue...");
     getchar();
     system("cls");
 }
@@ -405,7 +408,8 @@ void viewRegisteredUsers()
 // Delete User Account
 void deleteUserAccount()
 {
-    char username[MAX_USERNAME], password[MAX_PASSWORD], target_username[MAX_USERNAME];
+    char username[MAX_USERNAME], password[MAX_PASSWORD], email[100];
+    char target_username[MAX_USERNAME];
     FILE *file = fopen(USER_FILE, "r");
     FILE *temp = fopen("temp.txt", "w");
 
@@ -418,39 +422,55 @@ void deleteUserAccount()
     printf("Enter username to delete: ");
     scanf("%s", target_username);
 
+    // Check if the user exists
     int found = 0;
-    while (fscanf(file, "%s %s", username, password) != EOF)
+    while (fscanf(file, "%s %s %s", username, password, email) != EOF)
     {
         if (strcmp(username, target_username) == 0)
         {
-            found = 1;
+            found = 1; // User found
+            printf("User  '%s' found with email '%s'. Please confirm deletion (yes/no): ", target_username, email);
+            char confirmation[4];
+            scanf("%s", confirmation);
+            if (strcmp(confirmation, "yes") == 0)
+            {
+                printf("Deleting user '%s'...\n", target_username);
+                continue; // Skip writing this user to the temp file
+            }
+            else
+            {
+                printf("Deletion of user '%s' cancelled.\n", target_username);
+            }
         }
         else
         {
-            fprintf(temp, "%s %s\n", username, password);
+            fprintf(temp, "%s %s %s\n", username, password, email); // Write other users to temp file
         }
     }
 
     fclose(file);
     fclose(temp);
 
+    // Replace the original user file with the temp file
     remove(USER_FILE);
     rename("temp.txt", USER_FILE);
 
     if (found)
     {
-        printf("User '%s' deleted successfully.\n", target_username);
+        printf("User  '%s' deleted successfully.\n", target_username);
     }
     else
     {
-        printf("User not found.\n");
+        printf("User  '%s' not found.\n", target_username);
     }
 
     getchar();
-    printf("Please enter to continue.");
+    printf("Press enter to continue...");
     getchar();
     system("cls");
 }
+
+
 
 // Initialize Buses
 void initializeBuses()
