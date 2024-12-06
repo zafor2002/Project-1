@@ -77,6 +77,7 @@ void initializeBuses();
 void selectSeat(Bus *selectedBus, int route_id, const char *date);
 void cancelReservation();
 void adminCancelReservation();
+void viewUserDetails();
 
 // Part of Abdul Aziz
 
@@ -179,7 +180,8 @@ void adminMenu()
         printf("5. Add New Route\n");
         printf("6. Remove Route\n");
         printf("7. Cancel User Ticket\n");
-        printf("8. Back to Main Menu\n");
+        printf("8. View User Details\n"); 
+        printf("9. Back to Main Menu\n");
         printf("Enter your choice: ");
         scanf("%d", &choice);
 
@@ -201,23 +203,23 @@ void adminMenu()
             system("cls");
             removeBus(); 
             break;
-
         case 5:
             system("cls");
             addRoute(); 
             break;
-
         case 6:
             system("cls");
             removeRoute();
             break;
-
         case 7:
             system("cls");
             adminCancelReservation();
             break;
-
         case 8:
+            system("cls");
+            viewUserDetails(); // Call the new function
+            break;
+        case 9:
             system("cls");
             return;
         default:
@@ -697,6 +699,11 @@ void selectSeat(Bus *selectedBus, int route_id, const char *date)
         selectedBus->seats[route_id - 1][seat_number - 1] = 1;
         seats[seat_count++] = seat_number;
         printf(GREEN "Seat %d reserved successfully.\n" RESET, seat_number);
+         getchar();
+        printf("Press enter to continue...");
+        getchar();
+        system("cls");
+
         displaySeats(selectedBus, route_id);
     }
 
@@ -1123,21 +1130,36 @@ void processPayment(int total_price, int *seats, int seat_count, int route_id, c
     printf(GREEN "Total Price      : " RESET "%d Taka\n", total_price);
     printf(GREEN "Payment Status   : " RESET YELLOW "Successful\n" RESET);
     printf(CYAN "----------------------------------------\n" RESET);
-
-    printf(BLUE "Route            : " RESET "%s\n", routes[route_id - 1].route_name);
-    printf(BLUE "Bus Name         : " RESET "%s\n", name);
     printf(BLUE "Seats Booked     : " RESET);
 
     for (int i = 0; i < seat_count; i++)
     {
         printf("%d%s", seats[i], (i < seat_count - 1) ? ", " : "");
     }
+    printf("\n");
 
-    printf("\n" CYAN "----------------------------------------\n" RESET);
-    printf(GREEN "Thank you for booking with us!\n Your tickets will be sent to your phone number shortly.\n");
-    printf(CYAN "========================================\n" RESET);
-    getchar();
-    printf("Please enter to continue.");
+    // Save passenger details to details.txt
+    FILE *file = fopen("details.txt", "a");
+    if (file != NULL)
+    {
+        fprintf(file, "Passenger Name: %s\n", customer_name);
+        fprintf(file, "Phone Number: %s\n", phone_number);
+        fprintf(file, "Travel Date: %s\n", date);
+        fprintf(file, "Total Amount: %d Taka\n", total_price);
+        fprintf(file, "Route ID: %d\n", route_id);
+        fprintf(file, "----------------------------------------\n");
+        fclose(file);
+    }
+    else
+    {
+        printf("Error opening file for writing.\n");
+    }
+
+    printf("Your ticket has been successfully booked!\n");
+    printf("Thank you for choosing our service!\n");
+
+     getchar();
+    printf("Press enter to continue...");
     getchar();
     system("cls");
 }
@@ -1209,6 +1231,34 @@ void displayCancellationPolicy()
     printf("[+8801700000000]\n");
     printf("=============================================\n");
 
+    getchar();
+    printf("Press enter to continue...");
+    getchar();
+    system("cls");
+}
+
+// Function to view user details from details.txt
+void viewUserDetails()
+{
+    char line[256];
+    FILE *file = fopen("details.txt", "r");
+    if (!file)
+    {
+        printf("Error opening details file.\n");
+        return;
+    }
+
+    printf("\n=== User Details ===\n");
+    printf("========================================\n");
+
+    // Read and display each line from the details file
+    while (fgets(line, sizeof(line), file))
+    {
+        printf("%s", line);
+    }
+
+    fclose(file);
+    printf("========================================\n");
     getchar();
     printf("Press enter to continue...");
     getchar();
