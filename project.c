@@ -137,6 +137,10 @@ void mainMenu()
             else
             {
                 printf("Invalid credentials! Try again.\n");
+                            getchar();
+                     printf("Press enter to continue...");
+                     getchar();
+                     system("cls");
             }
             break;
         case 3:
@@ -149,6 +153,10 @@ void mainMenu()
             else
             {
                 printf("Invalid admin credentials! Try again.\n");
+                getchar();
+                    printf("Press enter to continue...");
+                    getchar();
+                system("cls");
             }
             break;
         case 4:
