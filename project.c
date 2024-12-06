@@ -310,12 +310,21 @@ void registerUser()
         {
             printf("Username already exists! Please choose a different username.\n");
             fclose(file);
+            getchar();
+            printf("Press enter to continue...");
+            getchar();
+            system("cls");
             return;
+            
         }
         if (strcmp(email, file_email) == 0)
         {
             printf("Email already exists! Please choose a different email.\n");
             fclose(file);
+            getchar();
+            printf("Press enter to continue...");
+            getchar();
+            system("cls");
             return;
         }
     }
