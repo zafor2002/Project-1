@@ -1045,7 +1045,7 @@ void removeRoute()
     // Update IDs to maintain consistency
     for (int i = 0; i < total_routes; i++)
     {
-        routes[i].route_id = i + 1;
+        routes[i].route_id = i+1 ;
     }
 
     getchar();
@@ -1066,7 +1066,7 @@ void processPayment(int total_price, int *seats, int seat_count, int route_id, c
     printf(BLUE "Phone Number : " RESET "%s\n", phone_number);
     printf(BLUE "Travel Date  : " RESET "%s\n", date); // Show the travel date
     printf(BLUE "Bus Name     : " RESET "%s\n", bus_name); // Show the bus name
-    printf(BLUE "Route Name   : " RESET "%s\n", routes[route_id].route_name); // Show the route name
+    printf(BLUE "Route Name   : " RESET "%s\n", routes[route_id - 1].route_name); // Show the route name
     printf(CYAN "----------------------------------------\n" RESET);
 
     printf(GREEN "Total Price      : " RESET "%d Taka\n", total_price);
@@ -1163,7 +1163,7 @@ void processPayment(int total_price, int *seats, int seat_count, int route_id, c
     printf(BLUE "Phone Number : " RESET "%s\n", phone_number);
     printf(BLUE "Travel Date  : " RESET "%s\n", date); // Show the travel date
     printf(BLUE "Bus Name     : " RESET "%s\n", bus_name); // Show the bus name
-    printf(BLUE "Route Name   : " RESET "%s\n", routes[route_id].route_name); // Show the route name
+    printf(BLUE "Route Name   : " RESET "%s\n", routes[route_id - 1].route_name); // Show the route name
     printf(CYAN "----------------------------------------\n" RESET);
 
     printf(GREEN "Total Price      : " RESET "%d Taka\n", total_price);
@@ -1179,6 +1179,32 @@ void processPayment(int total_price, int *seats, int seat_count, int route_id, c
     printf("\n" CYAN "========================================\n" RESET);
     printf("Thank you for your payment!\n");
     printf("Have a safe journey!\n");
+
+    FILE *file = fopen("details.txt", "a");
+    if (file != NULL)
+    {
+        fprintf(file, "Passenger Name: %s\n", customer_name); // Ensure username is saved
+        fprintf(file, "Phone Number : %s\n", phone_number);
+        fprintf(file, "Travel Date  : %s\n", date);
+        fprintf(file, "Total Price      : %d Taka\n", total_price);
+        fprintf(file, "Seats Booked     : ", seats);
+        
+        for (int i = 0; i < seat_count; i++)
+        {
+            fprintf(file, "%d%s", seats[i], (i < seat_count - 1) ? ", " : "");
+        }
+        
+        fprintf(file, "\nBus Name: %s\n", bus_name);
+        fprintf(file, "Route Name: %s\n", routes[route_id - 1].route_name);
+        fprintf(file, "----------------------------------------\n");
+        fclose(file);
+    }
+
+
+    else
+    {
+        printf("Error opening file to save details.\n");
+    }
 
     getchar();
     printf("Press enter to continue...");
