@@ -1,12 +1,32 @@
-Passenger Name: zafor
-Phone Number: 01723391561
-Travel Date: 02/02/2002
-Total Amount: 1140 Taka
-Route ID: 1
+Passenger Name: Zafor
+Phone Number : 01723391561
+Travel Date  : 02/02/2020
+Total Price      : 1140 Taka
+Seats Booked     : 2, 5
+Bus Name: National Travels
+Route Name: Dhaka to Chittagong
 ----------------------------------------
-Passenger Name: zfor
-Phone Number: 01723391561
-Travel Date: 02/02/2002
-Total Amount: 1140 Taka
-Route ID: 1
+Passenger Name: Zafor
+Phone Number : 01723391561
+Travel Date  : 02/02/2020
+Total Price      : 570 Taka
+Seats Booked     : 6
+Bus Name: National Travels
+Route Name: Dhaka to Chittagong
+----------------------------------------
+Passenger Name: Zafor
+Phone Number : 01723391561
+Travel Date  : 02/02/2020
+Total Price      : 570 Taka
+Seats Booked     : 7
+Bus Name: National Travels
+Route Name: Dhaka to Chittagong
+----------------------------------------
+Passenger Name: zafor
+Phone Number : 01723391561
+Travel Date  : 02/02/2020
+Total Price      : 570 Taka
+Seats Booked     : 8
+Bus Name: National Travels
+Route Name: Dhaka to Chittagong
 ----------------------------------------

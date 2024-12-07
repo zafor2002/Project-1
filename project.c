@@ -78,6 +78,10 @@ void selectSeat(Bus *selectedBus, int route_id, const char *date);
 void cancelReservation();
 void adminCancelReservation();
 void viewUserDetails();
+void saveSeatStatus();
+void loadSeatStatus();
+void viewUserHistoryByPhoneNumber(const char *phone_number);
+
 
 // Part of Abdul Aziz
 
@@ -224,8 +228,11 @@ void adminMenu()
             adminCancelReservation();
             break;
         case 8:
-            system("cls");
-            viewUserDetails(); // Call the new function
+             system("cls");
+            char phone_number[15];
+            printf("Enter User phone number to view history: ");
+            scanf("%s", phone_number);
+            viewUserHistoryByPhoneNumber(phone_number); // Call the new function
             break;
         case 9:
             system("cls");
@@ -250,7 +257,8 @@ void userMenu()
         printf("1. View Available Routes         \n");
         printf("2. Book a Ticket                 \n");
         printf("3. Cancel Reserved Ticket        \n");
-        printf("4. Back to Main Menu             \n");
+        printf("4. View Reservation History       \n"); // New option
+        printf("5. Back to Main Menu             \n");
         printf("=================================\n");
         printf("Enter your choice: ");
         scanf("%d", &choice);
@@ -265,27 +273,33 @@ void userMenu()
             system("cls");
             selectBusAndSeat();
             break;
-
         case 3:
             system("cls");
             cancelReservation();
+            userMenu();
             break;
-
         case 4:
+            system("cls");
+            char phone_number[15];
+            printf("Enter your phone number to view history: ");
+            scanf("%s", phone_number);
+            viewUserHistoryByPhoneNumber(phone_number); // Call the new function
+            break;
+        case 5:
             system("cls");
             return;
         default:
             system("cls");
             printf("Invalid choice! Try again.\n");
         }
-    } while (choice != 3);
+    } while (choice != 5);
 }
 
 
 // Register User
-void registerUser()
+void registerUser ()
 {
-    char username[MAX_USERNAME], password[MAX_PASSWORD], email[100];
+    char username[MAX_USERNAME], password[MAX_PASSWORD];
     FILE *file = fopen(USER_FILE, "a+"); 
     if (!file)
     {
@@ -293,18 +307,15 @@ void registerUser()
         return;
     }
 
-    
-    char file_username[MAX_USERNAME], file_password[MAX_PASSWORD], file_email[100];
+    char file_username[MAX_USERNAME], file_password[MAX_PASSWORD];
 
     // Input new user details
     printf("Enter username: ");
     scanf("%s", username);
-    printf("Enter email: ");
-    scanf("%s", email);
     printf("Enter password: ");
     scanf("%s", password);
 
-    while (fscanf(file, "%s %s %s", file_username, file_password, file_email) != EOF)
+    while (fscanf(file, "%s %s", file_username, file_password) != EOF)
     {
         if (strcmp(username, file_username) == 0)
         {
@@ -315,33 +326,21 @@ void registerUser()
             getchar();
             system("cls");
             return;
-            
-        }
-        if (strcmp(email, file_email) == 0)
-        {
-            printf("Email already exists! Please choose a different email.\n");
-            fclose(file);
-            getchar();
-            printf("Press enter to continue...");
-            getchar();
-            system("cls");
-            return;
         }
     }
 
     // Write new user details to file
-    fprintf(file, "%s %s %s\n", username, password, email);
+    fprintf(file, "%s %s\n", username, password);
     fclose(file);
 
     printf("Registration successful!\n");
 }
 
 // Login User
-int loginUser()
+int loginUser ()
 {
-    char input[MAX_USERNAME + 100]; // Buffer for username or email
-    char password[MAX_PASSWORD];
-    char file_username[MAX_USERNAME], file_password[MAX_PASSWORD], file_email[100];
+    char username[MAX_USERNAME], password[MAX_PASSWORD];
+    char file_username[MAX_USERNAME], file_password[MAX_PASSWORD];
     FILE *file = fopen(USER_FILE, "r");
     if (!file)
     {
@@ -349,15 +348,15 @@ int loginUser()
         return 0;
     }
 
-    printf("Enter username or email: ");
-    scanf("%s", input); 
+    // Input user credentials
+    printf("Enter username: ");
+    scanf("%s", username);
     printf("Enter password: ");
     scanf("%s", password);
 
-    while (fscanf(file, "%s %s %s", file_username, file_password, file_email) != EOF)
+    while (fscanf(file, "%s %s", file_username, file_password) != EOF)
     {
-        
-        if ((strcmp(input, file_username) == 0 || strcmp(input, file_email) == 0) && strcmp(password, file_password) == 0)
+        if (strcmp(username, file_username) == 0 && strcmp(password, file_password) == 0)
         {
             fclose(file);
             return 1; // Login successful
@@ -612,8 +611,7 @@ void displaySeats(Bus *selectedBus, int route_id)
 }
 
 // Initialize Buses
-void initializeBuses()
-{
+void initializeBuses() {
     // Predefined buses
     strcpy(buses[0].name, "Hanif Enterprise");
     strcpy(buses[1].name, "National Travels");
@@ -622,12 +620,16 @@ void initializeBuses()
     total_buses = 4;
 
     // Initialize seat availability
-    for (int i = 0; i < total_buses; i++)
-    {
+    for (int i = 0; i < total_buses; i++) {
         buses[i].bus_id = i + 1;
-        memset(buses[i].seats, 0, sizeof(buses[i].seats));
+        memset(buses[i].seats, 0, sizeof(buses[i].seats)); // Initialize seats to 0 (available)
     }
+
+    // Load seat status from file
+    loadSeatStatus();
 }
+
+
 // Seat Reservation
 void selectSeat(Bus *selectedBus, int route_id, const char *date)
 {
@@ -734,6 +736,7 @@ void selectSeat(Bus *selectedBus, int route_id, const char *date)
 
     system("cls");
     processPayment(seat_count * price, seats, seat_count, route_id, selectedBus->name, customer_name, phone_number, date);
+    saveSeatStatus();
 }
 
 // Reserve Ticket Cancellation function
@@ -798,9 +801,13 @@ void cancelReservation()
     }
     else
     {
-        selectedBus->seats[route_id - 1][seat_number - 1] = 0; // Cancel the reservation
+        // Cancel the reservation
+        selectedBus->seats[route_id - 1][seat_number - 1] = 0; // Mark the seat as available
         printf("Reservation for Seat %d on Route '%s' and Bus '%s' has been successfully canceled.\n",
                seat_number, routes[route_id - 1].route_name, selectedBus->name);
+        
+        // Save the updated seat status to the file
+        saveSeatStatus();
     }
 
     getchar();
@@ -883,9 +890,12 @@ void adminCancelReservation()
     else
     {
         // Cancel the reservation
-        buses[bus_choice - 1].seats[route_choice - 1][seat_number - 1] = 0;
+        buses[bus_choice - 1].seats[route_choice - 1][seat_number - 1] = 0; // Mark the seat as available
         printf("Reservation for seat %d on '%s' (route '%s') has been successfully canceled.\n",
                seat_number, buses[bus_choice - 1].name, routes[route_choice - 1].route_name);
+        
+        // Save the updated seat status to the file
+        saveSeatStatus();
     }
 
     getchar();
@@ -1045,7 +1055,7 @@ void removeRoute()
 }
 
 // Process Payment
-void processPayment(int total_price, int *seats, int seat_count, int route_id, const char *name, const char *customer_name, const char *phone_number, const char *date)
+void processPayment(int total_price, int *seats, int seat_count, int route_id, const char *bus_name, const char *customer_name, const char *phone_number, const char *date)
 {
     int payment_choice;
     printf("\n" CYAN "========================================\n" RESET);
@@ -1055,6 +1065,8 @@ void processPayment(int total_price, int *seats, int seat_count, int route_id, c
     printf(BLUE "Passenger Name: " RESET "%s\n", customer_name);
     printf(BLUE "Phone Number : " RESET "%s\n", phone_number);
     printf(BLUE "Travel Date  : " RESET "%s\n", date); // Show the travel date
+    printf(BLUE "Bus Name     : " RESET "%s\n", bus_name); // Show the bus name
+    printf(BLUE "Route Name   : " RESET "%s\n", routes[route_id].route_name); // Show the route name
     printf(CYAN "----------------------------------------\n" RESET);
 
     printf(GREEN "Total Price      : " RESET "%d Taka\n", total_price);
@@ -1067,12 +1079,7 @@ void processPayment(int total_price, int *seats, int seat_count, int route_id, c
 
     // Select payment method
     printf("\n" CYAN "========================================\n" RESET);
-
-    getchar();
-    printf("Press enter to continue...");
-    getchar();
-    system("cls");
-    printf("\nSelect Payment Method:\n");
+    printf("Select Payment Method:\n");
     printf("1. Mobile Banking\n");
     printf("2. Bank Card\n");
     printf("Enter your choice: ");
@@ -1106,6 +1113,19 @@ void processPayment(int total_price, int *seats, int seat_count, int route_id, c
             printf("Invalid choice! Payment failed.\n");
             return;
         }
+
+        // Dummy transaction authentication
+        char transaction_pin[6];
+        printf("Enter your transaction PIN (4 digits): ");
+        scanf("%s", transaction_pin);
+
+        // Simulate PIN validation (for demonstration purposes, we assume "1234" is the correct PIN)
+        if (strcmp(transaction_pin, "1234") != 0)
+        {
+            printf(RED "Invalid transaction PIN! Payment failed.\n" RESET);
+            return;
+        }
+        printf(GREEN "Transaction PIN validated successfully!\n" RESET);
     }
     else if (payment_choice == 2)
     {
@@ -1142,6 +1162,8 @@ void processPayment(int total_price, int *seats, int seat_count, int route_id, c
     printf(BLUE "Passenger Name: " RESET "%s\n", customer_name);
     printf(BLUE "Phone Number : " RESET "%s\n", phone_number);
     printf(BLUE "Travel Date  : " RESET "%s\n", date); // Show the travel date
+    printf(BLUE "Bus Name     : " RESET "%s\n", bus_name); // Show the bus name
+    printf(BLUE "Route Name   : " RESET "%s\n", routes[route_id].route_name); // Show the route name
     printf(CYAN "----------------------------------------\n" RESET);
 
     printf(GREEN "Total Price      : " RESET "%d Taka\n", total_price);
@@ -1153,29 +1175,12 @@ void processPayment(int total_price, int *seats, int seat_count, int route_id, c
     {
         printf("%d%s", seats[i], (i < seat_count - 1) ? ", " : "");
     }
-    printf("\n");
 
-    // Save passenger details to details.txt
-    FILE *file = fopen("details.txt", "a");
-    if (file != NULL)
-    {
-        fprintf(file, "Passenger Name: %s\n", customer_name);
-        fprintf(file, "Phone Number: %s\n", phone_number);
-        fprintf(file, "Travel Date: %s\n", date);
-        fprintf(file, "Total Amount: %d Taka\n", total_price);
-        fprintf(file, "Route ID: %d\n", route_id);
-        fprintf(file, "----------------------------------------\n");
-        fclose(file);
-    }
-    else
-    {
-        printf("Error opening file for writing.\n");
-    }
+    printf("\n" CYAN "========================================\n" RESET);
+    printf("Thank you for your payment!\n");
+    printf("Have a safe journey!\n");
 
-    printf("Your ticket has been successfully booked!\n");
-    printf("Thank you for choosing our service!\n");
-
-     getchar();
+    getchar();
     printf("Press enter to continue...");
     getchar();
     system("cls");
@@ -1272,6 +1277,97 @@ void viewUserDetails()
     while (fgets(line, sizeof(line), file))
     {
         printf("%s", line);
+    }
+
+    fclose(file);
+    printf("========================================\n");
+    getchar();
+    printf("Press enter to continue...");
+    getchar();
+    system("cls");
+}
+
+// for save
+
+void saveSeatStatus() {
+    FILE *file = fopen("seat_data.txt", "w");
+    if (!file) {
+        printf("Error opening seat data file for writing.\n");
+        return;
+    }
+
+    for (int i = 0; i < total_buses; i++) {
+        for (int j = 0; j < total_routes; j++) {
+            for (int k = 0; k < MAX_SEATS; k++) {
+                fprintf(file, "%d %d %d %d\n", i + 1, j + 1, k + 1, buses[i].seats[j][k]);
+            }
+        }
+    }
+
+    fclose(file);
+    printf("Seat status saved successfully.\n");
+}
+
+
+
+void loadSeatStatus() {
+    FILE *file = fopen("seat_data.txt", "r");
+    if (!file) {
+        printf("No seat data file found. Initializing with default values.\n");
+        return; // If the file doesn't exist, we can just return
+    }
+
+    int bus_id, route_id, seat_number, status;
+    while (fscanf(file, "%d %d %d %d", &bus_id, &route_id, &seat_number, &status) != EOF) {
+        if (bus_id > 0 && bus_id <= total_buses && route_id > 0 && route_id <= total_routes && seat_number > 0 && seat_number <= MAX_SEATS) {
+            buses[bus_id - 1].seats[route_id - 1][seat_number - 1] = status;
+        }
+    }
+
+    fclose(file);
+    printf("Seat status loaded successfully.\n");
+}
+
+
+void viewUserHistoryByPhoneNumber(const char *phone_number)
+{
+    char line[256];
+    FILE *file = fopen("details.txt", "r");
+    if (!file)
+    {
+        printf("Error opening details file.\n");
+        return;
+    }
+
+    printf("\n=== Reservation History for Phone Number: %s ===\n", phone_number);
+    printf("========================================\n");
+
+    int found = 0; // Flag to check if any records are found
+
+    // Read and display each line from the details file
+    while (fgets(line, sizeof(line), file))
+    {
+        // Check if the line contains the phone number
+        if (strstr(line, phone_number) != NULL)
+        {
+            found = 1; // Set flag to true if a record is found
+            printf("%s", line); // Print the line containing the phone number
+
+            // Print the next few lines to show the reservation details
+            for (int i = 0; i < 7; i++) // Assuming 4 lines of details follow the phone number
+            {
+                if (fgets(line, sizeof(line), file) != NULL)
+                {
+                    printf("%s", line);
+                }
+            }
+            printf("========================================\n");
+        }
+    }
+
+    if (!found)
+    {
+        printf("No reservation history found for phone number: %s\n", phone_number);
     }
 
     fclose(file);
