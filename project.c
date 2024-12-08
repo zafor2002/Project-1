@@ -66,6 +66,7 @@ int loginUser();
 int loginAdmin();
 void viewRegisteredUsers();
 void deleteUserAccount();
+void initializeBuses();
 
 // Part of Abu Zafor
 
@@ -73,18 +74,16 @@ void deleteUserAccount();
 void displayRoutes();
 void displaySeats(Bus *selectedBus, int route_id);
 void selectBusAndSeat();
-void initializeBuses();
 void selectSeat(Bus *selectedBus, int route_id, const char *date);
 void cancelReservation();
 void adminCancelReservation();
-void viewUserDetails();
 void saveSeatStatus();
 void loadSeatStatus();
 void viewUserHistoryByPhoneNumber(const char *phone_number);
 
 
 // Part of Abdul Aziz
-
+void viewUserDetails();
 void addRoute();
 void removeRoute();
 void addBus();

@@ -30,3 +30,59 @@ Seats Booked     : 8
 Bus Name: National Travels
 Route Name: Dhaka to Chittagong
 ----------------------------------------
+Passenger Name: zafor
+Phone Number : 01723391561
+Travel Date  : 02/02/2020
+Total Price      : 570 Taka
+Seats Booked     : 11
+Bus Name: National Travels
+Route Name: Dhaka to Chittagong
+----------------------------------------
+Passenger Name: zafor
+Phone Number : 01723391561
+Travel Date  : 02/02/2020
+Total Price      : 800 Taka
+Seats Booked     : 3
+Bus Name: Desh Travels
+Route Name: Rajshahi to Dhaka
+----------------------------------------
+Passenger Name: zafor
+Phone Number : 01723391561
+Travel Date  : 02/02/2020
+Total Price      : 2280 Taka
+Seats Booked     : 13, 14, 15, 16
+Bus Name: National Travels
+Route Name: Dhaka to Chittagong
+----------------------------------------
+Passenger Name: zafor
+Phone Number : 01723391561
+Travel Date  : 02/02/2020
+Total Price      : 570 Taka
+Seats Booked     : 1
+Bus Name: National Travels
+Route Name: Dhaka to Rajshahi
+----------------------------------------
+Passenger Name: zafor
+Phone Number : 01723391561
+Travel Date  : 02/02/2020
+Total Price      : 570 Taka
+Seats Booked     : 3
+Bus Name: Grameen Travels
+Route Name: Rajshahi to Dhaka
+----------------------------------------
+Passenger Name: zafor
+Phone Number : 01723391561
+Travel Date  : 02/02/2020
+Total Price      : 570 Taka
+Seats Booked     : 2
+Bus Name: National Travels
+Route Name: Dhaka to Rajshahi
+----------------------------------------
+Passenger Name: zafor
+Phone Number : 01723391561
+Travel Date  : 02/02/2024
+Total Price      : 570 Taka
+Seats Booked     : 3
+Bus Name: Hanif Enterprise
+Route Name: Dhaka to Rajshahi
+----------------------------------------
