@@ -86,3 +86,19 @@ Seats Booked     : 3
 Bus Name: Hanif Enterprise
 Route Name: Dhaka to Rajshahi
 ----------------------------------------
+Passenger Name: Abu Zafor
+Phone Number : 01723391561
+Travel Date  : 02/02/2020
+Total Price      : 570 Taka
+Seats Booked     : 24
+Bus Name: Hanif Enterprise
+Route Name: Dhaka to Rajshahi
+----------------------------------------
+Passenger Name: zafor
+Phone Number : 01723391561
+Travel Date  : 02/02/2020
+Total Price      : 570 Taka
+Seats Booked     : 2
+Bus Name: Hanif Enterprise
+Route Name: Dhaka to Rajshahi
+----------------------------------------

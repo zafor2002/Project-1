@@ -1321,13 +1321,13 @@ void saveSeatStatus() {
         return;
     }
 
-    for (int i = 0; i < total_buses; i++) {
-        for (int j = 0; j < total_routes; j++) {
-            for (int k = 0; k < MAX_SEATS; k++) {
-                fprintf(file, "%d %d %d %d\n", i + 1, j + 1, k + 1, buses[i].seats[j][k]);
-            }
+    for (int j = 0; j < total_routes; j++) { // Loop through routes
+    for (int i = 0; i < total_buses; i++) { // Loop through buses
+        for (int k = 0; k < MAX_SEATS; k++) { // Loop through seats
+            fprintf(file, "%d %d %d %d\n", i + 1, j + 1, k + 1, buses[i].seats[j][k]);
         }
     }
+}
 
     fclose(file);
     printf("Seat status saved successfully.\n");
