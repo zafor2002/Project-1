@@ -903,6 +903,96 @@ void adminCancelReservation()
     system("cls");
 }
 
+
+void saveSeatStatus() {
+    FILE *file = fopen("seat_data.txt", "w");
+    if (!file) {
+        printf("Error opening seat data file for writing.\n");
+        return;
+    }
+
+    for (int j = 0; j < total_routes; j++) { // Loop through routes
+    for (int i = 0; i < total_buses; i++) { // Loop through buses
+        for (int k = 0; k < MAX_SEATS; k++) { // Loop through seats
+            fprintf(file, "%d %d %d %d\n", i + 1, j + 1, k + 1, buses[i].seats[j][k]);
+        }
+    }
+}
+
+    fclose(file);
+    printf("Seat status saved successfully.\n");
+}
+
+
+
+void loadSeatStatus() {
+    FILE *file = fopen("seat_data.txt", "r");
+    if (!file) {
+        printf("No seat data file found. Initializing with default values.\n");
+        return; // If the file doesn't exist, we can just return
+    }
+
+    int bus_id, route_id, seat_number, status;
+    while (fscanf(file, "%d %d %d %d", &bus_id, &route_id, &seat_number, &status) != EOF) {
+        if (bus_id > 0 && bus_id <= total_buses && route_id > 0 && route_id <= total_routes && seat_number > 0 && seat_number <= MAX_SEATS) {
+            buses[bus_id - 1].seats[route_id - 1][seat_number - 1] = status;
+        }
+    }
+
+    fclose(file);
+    printf("Seat status loaded successfully.\n");
+}
+
+
+void viewUserHistoryByPhoneNumber(const char *phone_number)
+{
+    char line[256];
+    FILE *file = fopen("details.txt", "r");
+    if (!file)
+    {
+        printf("Error opening details file.\n");
+        return;
+    }
+
+    printf("\n=== Reservation History for Phone Number: %s ===\n", phone_number);
+    printf("========================================\n");
+
+    int found = 0; // Flag to check if any records are found
+
+    // Read and display each line from the details file
+    while (fgets(line, sizeof(line), file))
+    {
+        // Check if the line contains the phone number
+        if (strstr(line, phone_number) != NULL)
+        {
+            found = 1; // Set flag to true if a record is found
+            printf("%s", line); // Print the line containing the phone number
+
+            // Print the next few lines to show the reservation details
+            for (int i = 0; i < 7; i++) // Assuming 4 lines of details follow the phone number
+            {
+                if (fgets(line, sizeof(line), file) != NULL)
+                {
+                    printf("%s", line);
+                }
+            }
+            printf("========================================\n");
+        }
+    }
+
+    if (!found)
+    {
+        printf("No reservation history found for phone number: %s\n", phone_number);
+    }
+
+    fclose(file);
+    printf("========================================\n");
+    getchar();
+    printf("Press enter to continue...");
+    getchar();
+    system("cls");
+}
+
 // Add New Bus
 void addBus()
 {
@@ -1314,91 +1404,3 @@ void viewUserDetails()
 
 // for save
 
-void saveSeatStatus() {
-    FILE *file = fopen("seat_data.txt", "w");
-    if (!file) {
-        printf("Error opening seat data file for writing.\n");
-        return;
-    }
-
-    for (int j = 0; j < total_routes; j++) { // Loop through routes
-    for (int i = 0; i < total_buses; i++) { // Loop through buses
-        for (int k = 0; k < MAX_SEATS; k++) { // Loop through seats
-            fprintf(file, "%d %d %d %d\n", i + 1, j + 1, k + 1, buses[i].seats[j][k]);
-        }
-    }
-}
-
-    fclose(file);
-    printf("Seat status saved successfully.\n");
-}
-
-
-
-void loadSeatStatus() {
-    FILE *file = fopen("seat_data.txt", "r");
-    if (!file) {
-        printf("No seat data file found. Initializing with default values.\n");
-        return; // If the file doesn't exist, we can just return
-    }
-
-    int bus_id, route_id, seat_number, status;
-    while (fscanf(file, "%d %d %d %d", &bus_id, &route_id, &seat_number, &status) != EOF) {
-        if (bus_id > 0 && bus_id <= total_buses && route_id > 0 && route_id <= total_routes && seat_number > 0 && seat_number <= MAX_SEATS) {
-            buses[bus_id - 1].seats[route_id - 1][seat_number - 1] = status;
-        }
-    }
-
-    fclose(file);
-    printf("Seat status loaded successfully.\n");
-}
-
-
-void viewUserHistoryByPhoneNumber(const char *phone_number)
-{
-    char line[256];
-    FILE *file = fopen("details.txt", "r");
-    if (!file)
-    {
-        printf("Error opening details file.\n");
-        return;
-    }
-
-    printf("\n=== Reservation History for Phone Number: %s ===\n", phone_number);
-    printf("========================================\n");
-
-    int found = 0; // Flag to check if any records are found
-
-    // Read and display each line from the details file
-    while (fgets(line, sizeof(line), file))
-    {
-        // Check if the line contains the phone number
-        if (strstr(line, phone_number) != NULL)
-        {
-            found = 1; // Set flag to true if a record is found
-            printf("%s", line); // Print the line containing the phone number
-
-            // Print the next few lines to show the reservation details
-            for (int i = 0; i < 7; i++) // Assuming 4 lines of details follow the phone number
-            {
-                if (fgets(line, sizeof(line), file) != NULL)
-                {
-                    printf("%s", line);
-                }
-            }
-            printf("========================================\n");
-        }
-    }
-
-    if (!found)
-    {
-        printf("No reservation history found for phone number: %s\n", phone_number);
-    }
-
-    fclose(file);
-    printf("========================================\n");
-    getchar();
-    printf("Press enter to continue...");
-    getchar();
-    system("cls");
-}
